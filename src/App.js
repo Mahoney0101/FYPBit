@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { API, Storage } from 'aws-amplify';import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
+import { API, Storage } from 'aws-amplify';import { AmplifySignOut } from '@aws-amplify/ui-react';
 import { listNotes } from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
+import {
+  LineChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Line
+} from "recharts";
+import jsonData from './HRVdata.json';
 
+const json = JSON.parse(JSON.stringify(jsonData));
 const initialFormState = { name: '', description: '' }
 
 function App() {
@@ -36,6 +47,8 @@ function App() {
     }
     setNotes([ ...notes, formData ]);
     setFormData(initialFormState);
+    console.log(createNoteMutation);
+    console.log(formData);
   }
 
   async function deleteNote({ id }) {
@@ -69,7 +82,9 @@ function App() {
   type="file"
   onChange={onChange}
 />
+     
       <button onClick={createNote}>Create Note</button>
+      
       <div style={{marginBottom: 30}}>
       {
   notes.map(note => (
@@ -84,9 +99,22 @@ function App() {
   ))
 }
       </div>
+      <LineChart
+          width={730}
+          height={250}
+          data={json}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis  />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="Samples" stroke="#8884d8" />
+        </LineChart>
       <AmplifySignOut />
     </div>
   );
 }
 
-export default withAuthenticator(App);
+export default App;
