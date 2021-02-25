@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { API, Storage } from 'aws-amplify';import { AmplifySignOut } from '@aws-amplify/ui-react';
+import { Auth } from "@aws-amplify/auth";
+import { API, Storage } from 'aws-amplify';import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
 import { listNotes } from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 import {
@@ -9,21 +10,33 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
+//  Legend,
   Line
 } from "recharts";
 import jsonData from './HRVdata.json';
+//import jsonDataH from './HRD.json';
+
+
 
 const json = JSON.parse(JSON.stringify(jsonData));
+//const jsonH = JSON.parse(JSON.stringify(jsonDataH));
 const initialFormState = { name: '', description: '' }
 
 function App() {
   const [notes, setNotes] = useState([]);
   const [formData, setFormData] = useState(initialFormState);
-
+  const [user, setUser] = useState("");
   useEffect(() => {
     fetchNotes();
+    getUsername();
   }, []);
+
+  async function getUsername(){
+    await Auth.currentAuthenticatedUser()
+    .then(user => {
+      setUser(user.username);
+    });
+  }
 
   async function fetchNotes() {
     const apiData = await API.graphql({ query: listNotes });
@@ -67,7 +80,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>My Notes App</h1>
+      <h1> {user} Dashboard</h1>
       <input
         onChange={e => setFormData({ ...formData, 'name': e.target.value})}
         placeholder="Note name"
@@ -108,13 +121,14 @@ function App() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis  />
           <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="Samples" stroke="#8884d8" />
+          <Tooltip/>
+          <Line dot={false} type="monotone" dataKey="Samples" stroke="#8884d8" />
         </LineChart>
+        <br/>
+
       <AmplifySignOut />
     </div>
   );
 }
 
-export default App;
+export default withAuthenticator(App);
