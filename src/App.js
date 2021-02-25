@@ -10,7 +10,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
 //  Legend,
   Line
 } from "recharts";
@@ -113,7 +112,6 @@ function App() {
   ))
 }
       </div>
-      <ResponsiveContainer width={700} height="80%">
       <LineChart
           width={730}
           height={250}
@@ -126,10 +124,9 @@ function App() {
           <Tooltip/>
           <Line dot={false} type="monotone" dataKey="Samples" stroke="#8884d8" />
         </LineChart>
-        </ResponsiveContainer>
         <br/>
 
-      <AmplifySignOut />
+      <AmplifySignOut button-color="blue"/>
     </div>
   );
 }
