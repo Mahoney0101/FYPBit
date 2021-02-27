@@ -37,3 +37,33 @@ export const onDeleteNote = /* GraphQL */ `
     }
   }
 `;
+export const onCreateHrv = /* GraphQL */ `
+  subscription OnCreateHrv {
+    onCreateHRV {
+      id
+      # value
+      # createdAt
+      # updatedAt
+    }
+  }
+`;
+export const onUpdateHrv = /* GraphQL */ `
+  subscription OnUpdateHrv {
+    onUpdateHRV {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteHrv = /* GraphQL */ `
+  subscription OnDeleteHrv {
+    onDeleteHRV {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;

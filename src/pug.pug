@@ -1,0 +1,216 @@
+.container
+	.menu-column
+		ul(class='nav')
+			li(class='pulse')
+			li(class='chat')
+			li(class='calendar')
+			li(class='clipboard')
+			li(class='settings')
+		.profile
+			img(src='https://placeimg.com/100/100/face')
+	.summary-column
+		.profile-img#profileImage
+			img(src='https://placeimg.com/400/400/face')
+			.name
+				.
+					Jana <br> Novakova
+		.statistics
+			h2 summary
+			.age
+				span(class='title title-age') 22
+			.weight
+				span(class='title title-weight') 53 kg
+			.float-none
+			.height
+				.icon
+				.data
+					span 172 cm
+			.bmi
+				span(class='title title-bmi') 20.4
+			.fat
+				span(class='title title-fat') 11
+					span(class='percentage') %
+			.float-none
+			h2(class='allergies') allergies
+			.row
+				.
+					peanuts
+				.severity
+					.fill(style="width: 45%; height: inherit;")
+			.row
+				.
+					penicilin
+				.severity
+					.fill(style="width: 80%; height: inherit;")
+	.content-column
+		.header-container#headerContainer
+			.nav
+				.content
+					p 
+						| hi 
+						span(class='name') jana
+						|, it seems you are in
+					span(class='shape score') good
+					span(class='shape')  shape
+			.select-boxes
+				.content
+					.select-wrapper
+						select
+							option Bl. Pressure
+					.select-wrapper
+						select
+							option Today
+			.float-none
+			.graph
+				canvas(id='bpChart' style='position: relative; z-index: 100;')
+		.split-container
+			.split
+				h3 Temperature
+				.temperature
+					.
+						36.7
+				.split-graph
+					canvas(id='temperatureGraph')
+			.split
+				h3 Calories burned
+				.calories
+					.
+						537
+				.split-graph
+					canvas(id='calorieGraph')
+			.split
+				h3 Heart rate
+				.heart-rate
+					.
+						87
+				.split-graph
+					canvas(id='heartRateGraph')
+		.sleep
+			.totals
+				.collective
+					span(class='hours') 8
+					span(class='minutes') 25
+					p Total sleep time
+				.split.first
+					.
+						6h 12m
+					p Deep
+				.split
+					.
+						2h 13m
+					p Light
+			.sleep-graph
+				.sleep-graph-container
+					h2  Sleep Analytics
+					.sleep-select-wrapper
+						select
+							option(value='today') Today
+					.chart-container
+						canvas(id='sleepChart')
+		.float-none
+		.split-container
+			.split.bottom
+				h2 Appointments
+				.appointments
+					.calendar-container
+						.calendar
+							.
+								25
+							span(class='date') th
+							span(class='month') Jul
+						.content
+							table(class='appointment-table')
+								tr
+									td(id='time')
+										.
+											13:00
+								tr
+									td(id='title')
+										.
+											Dentist
+								tr
+									td(id='name')
+										.
+											Jozef Novotny
+			.split.bottom
+				h2 Doctors around
+				table(class='doctor-grid')
+					tr
+						td(height='65')
+							img(src='https://placeimg.com/65/65/people')
+						td
+							img(src='https://placeimg.com/65/65/face')
+						td
+							img(src='https://placeimg.com/65/65/people')
+					tr
+						td
+							img(src='https://placeimg.com/65/65/face')
+						td
+							img(src='https://placeimg.com/65/65/people')
+						td(id='expand')
+							.background
+								.
+									+8
+
+			.split.bottom
+				#map
+				.map-overlay
+					h2 Steps today
+					span(class='steps') 4578
+					span(class='distance') 1.7 km
+	.search-column
+		.search-container
+			img(src='https://svgshare.com/i/56w.svg')
+			input(type='text' placeholder='Search')
+		.activity-list
+			h3 Recent Activity
+			.activity
+				.image-container
+					img(src='https://placeimg.com/40/40/face')
+				.text
+					span(class='name') Peter Smith 
+					| added a new appointment to your calendar.
+					span(class='time-ago') 2 hours ago
+			.activity
+				.image-container
+					img(src='https://placeimg.com/40/40/person')
+				.text
+					span(class='name') Katarina Rychia 
+					| commented on your Results 09
+					span(class='time-ago') 2 hours ago
+			.activity
+				.image-container
+					img(src='https://placeimg.com/40/40/face')
+				.text
+					span(class='name') Tereza Dvorak 
+					| added two attachments to Results 238.
+					span(class='time-ago') 6 days ago
+			.activity
+				.image-container
+					img(src='https://placeimg.com/40/40/person')
+				.text
+					span(class='name') Peter Smith 
+					| added a new appointment to your calendar.
+					span(class='time-ago') 7 days ago
+			.your-doctors
+				h3 Your Doctors
+				.doctor
+					.image-container
+						img(src='https://placeimg.com/40/40/person')
+					.text
+						span(class='name-large') Peter Smith
+						span(class='title') Dentist
+				.doctor
+					.image-container
+						img(src='https://placeimg.com/40/40/face')
+					.text
+						span(class='name-large') Katarina Rychia 
+						span(class='title') Dentist
+				.doctor
+					.image-container
+						img(src='https://placeimg.com/40/40/person')
+					.text
+						span(class='name-large') Tereza Dvorak 
+						span(class='title') Physician
+				button(class='find-doctor') Find new doctor
+			

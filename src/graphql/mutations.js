@@ -46,3 +46,42 @@ export const deleteNote = /* GraphQL */ `
     }
   }
 `;
+export const createHrv = /* GraphQL */ `
+  mutation CreateHrv(
+    $input: CreateHRVInput!
+    $condition: ModelHRVConditionInput
+  ) {
+    createHRV(input: $input, condition: $condition) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateHrv = /* GraphQL */ `
+  mutation UpdateHrv(
+    $input: UpdateHRVInput!
+    $condition: ModelHRVConditionInput
+  ) {
+    updateHRV(input: $input, condition: $condition) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteHrv = /* GraphQL */ `
+  mutation DeleteHrv(
+    $input: DeleteHRVInput!
+    $condition: ModelHRVConditionInput
+  ) {
+    deleteHRV(input: $input, condition: $condition) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;

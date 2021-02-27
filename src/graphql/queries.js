@@ -32,3 +32,30 @@ export const listNotes = /* GraphQL */ `
     }
   }
 `;
+export const getHrv = /* GraphQL */ `
+  query GetHrv($id: ID!) {
+    getHRV(id: $id) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listHrVs = /* GraphQL */ `
+  query ListHrVs(
+    $filter: ModelHRVFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listHRVs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        value
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

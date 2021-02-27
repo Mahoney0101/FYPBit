@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './App.scss';
 import { Auth } from "@aws-amplify/auth";
-import { API, Storage } from 'aws-amplify';import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
-import { listNotes } from './graphql/queries';
+import  { API, graphqlOperation, Storage } from 'aws-amplify';import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
+import { listNotes , getHrv} from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 import {
   LineChart,
@@ -14,6 +14,7 @@ import {
   Line
 } from "recharts";
 import jsonData from './HRVdata.json';
+import { onCreateHrv } from './graphql/subscriptions';
 //import jsonDataH from './HRD.json';
 
 
@@ -26,10 +27,14 @@ function App() {
   const [notes, setNotes] = useState([]);
   const [formData, setFormData] = useState(initialFormState);
   const [user, setUser] = useState("");
-  useEffect(() => {
+  const [HRVValue, setHRVValue] = useState("");
+  useEffect(async() => {
     fetchNotes();
     getUsername();
+    subscribeToHrv();
   }, []);
+  
+
 
   async function getUsername(){
     await Auth.currentAuthenticatedUser()
@@ -37,6 +42,8 @@ function App() {
       setUser(user.username);
     });
   }
+
+
 
   async function fetchNotes() {
     const apiData = await API.graphql({ query: listNotes });
@@ -49,6 +56,24 @@ function App() {
       return note;
     }))
     setNotes(apiData.data.listNotes.items);
+  }  
+
+  async function getHrvValue(hrvId) {
+    const apiData = await API.graphql({ query: getHrv,variables: {id: hrvId} });
+    const HrvFromAPI = apiData.data.getHRV.value;
+    setHRVValue(HrvFromAPI);
+  }  
+  
+  async function subscribeToHrv() {
+    await API.graphql(graphqlOperation(onCreateHrv))
+    .subscribe({
+      next: event => {
+        if (event){
+          getHrvValue(event.value.data.onCreateHRV.id);
+        }
+      }
+    });
+    
   }
 
   async function createNote() {
@@ -60,8 +85,6 @@ function App() {
     }
     setNotes([ ...notes, formData ]);
     setFormData(initialFormState);
-    console.log(createNoteMutation);
-    console.log(formData);
   }
 
   async function deleteNote({ id }) {
@@ -80,7 +103,142 @@ function App() {
 
   return (
     <div className="App">
-      <h1> {user} Dashboard</h1>
+       <div className="container">
+        <div className="summary-column">
+          <div className="profile-img" id="profileImage"><img src="https://placeimg.com/400/400/face" />
+            <div className="name">James <br /> Mahoney</div>
+          </div>
+          <div className="statistics">
+            <h2>summary</h2>
+            <div className="age"><span className="title title-age">22</span></div>
+            <div className="weight"><span className="title title-weight">53 kg</span></div>
+            <div className="float-none" />
+            <div className="height">
+              <div className="icon" />
+              <div className="data"><span>172 cm</span></div>
+            </div>
+            <div className="bmi"><span className="title title-bmi">20.4</span></div>
+            <div className="fat"><span className="title title-fat">11<span className="percentage">%</span></span></div>
+            <div className="float-none" />
+            <h2 className="allergies">allergies</h2>
+            <div className="row">peanuts<div className="severity">
+                <div className="fill" style={{width: '45%', height: 'inherit'}} />
+              </div>
+            </div>
+            <div className="row">penicilin<div className="severity">
+                <div className="fill" style={{width: '80%', height: 'inherit'}} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="content-column">
+          <div className="header-container" id="headerContainer">
+            <div className="nav">
+              <div className="content">
+                <p> hi <span className="name">James</span>, it seems you are in</p><span className="shape score">good</span><span className="shape"> shape</span>
+              </div>
+            </div>
+            <div className="select-boxes">
+              <div className="content">
+                <div className="select-wrapper"><select>
+                    <option>Bl. Pressure</option>
+                  </select></div>
+                <div className="select-wrapper"><select>
+                    <option>Today</option>
+                  </select></div>
+              </div>
+            </div>
+            <div className="float-none" />
+            <div className="graph"><canvas id="bpChart" style={{position: 'relative', zIndex: 100}} /></div>
+          </div>
+          <div className="split-container">
+            <div className="split">
+              <h3>Temperature</h3>
+              <div className="temperature">36.7</div>
+              <div className="split-graph"><canvas id="temperatureGraph" /></div>
+            </div>
+            <div className="split">
+              <h3>Calories burned</h3>
+              <div className="calories">537</div>
+              <div className="split-graph"><canvas id="calorieGraph" /></div>
+            </div>
+            <div className="split">
+              <h3>Heart rate</h3>
+              <div className="heart-rate">87</div>
+              <div className="split-graph"><canvas id="heartRateGraph" /></div>
+            </div>
+          </div>
+          <div className="sleep">
+            <div className="totals">
+              <div className="collective"><span className="hours">8</span><span className="minutes">25</span>
+                <p>Total sleep time</p>
+              </div>
+              <div className="split first">6h 12m<p>Deep</p>
+              </div>
+              <div className="split">2h 13m<p>Light</p>
+              </div>
+            </div>
+            <div className="sleep-graph">
+              <div className="sleep-graph-container">
+                <h2> Sleep Analytics</h2>
+                <div className="sleep-select-wrapper"><select>
+                    <option value="today">Today</option>
+                  </select></div>
+                <div className="chart-container"><canvas id="sleepChart" /></div>
+              </div>
+            </div>
+          </div>
+          <div className="float-none" />
+          <div className="split-container">
+            <div className="split bottom">
+              <h2>Appointments</h2>
+              <div className="appointments">
+                <div className="calendar-container">
+                  <div className="calendar">25<span className="date">th</span><span className="month">Jul</span></div>
+                  <div className="content">
+                    <table className="appointment-table">
+                      <tbody><tr>
+                          <td id="time">13:00</td>
+                        </tr>
+                        <tr>
+                          <td id="title">Dentist</td>
+                        </tr>
+                        <tr>
+                          <td id="name">Jozef Novotny</td>
+                        </tr>
+                      </tbody></table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="split bottom">
+              <h2>Doctors around</h2>
+              <table className="doctor-grid">
+                <tbody><tr>
+                    <td height={65}><img src="https://placeimg.com/65/65/people" /></td>
+                    <td><img src="https://placeimg.com/65/65/face" /></td>
+                    <td><img src="https://placeimg.com/65/65/people" /></td>
+                  </tr>
+                  <tr>
+                    <td><img src="https://placeimg.com/65/65/face" /></td>
+                    <td><img src="https://placeimg.com/65/65/people" /></td>
+                    <td id="expand">
+                      <div className="background">+8
+                      </div>
+                    </td>
+                  </tr>
+                </tbody></table>
+            </div>
+            <div className="split bottom">
+              <div id="map" />
+              <div className="map-overlay">
+                <h2>Steps today</h2><span className="steps">4578</span><span className="distance">1.7 km</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h1> {user} {HRVValue}</h1>
       <input
         onChange={e => setFormData({ ...formData, 'name': e.target.value})}
         placeholder="Note name"

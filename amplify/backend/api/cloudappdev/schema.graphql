@@ -4,3 +4,8 @@ type Note @model {
   description: String
   image: String
 }
+
+type HRV @model{
+  id: ID!
+  value: String?
+}
