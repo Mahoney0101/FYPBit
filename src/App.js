@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.scss';
 import { Auth } from "@aws-amplify/auth";
 import  { API, graphqlOperation, Storage } from 'aws-amplify';import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
-import { listNotes , getHrv} from './graphql/queries';
+import { listNotes , getHrv, listHrVs} from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 import {
   LineChart,
@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-//  Legend,
+  Legend,
   Line
 } from "recharts";
 import jsonData from './HRVdata.json';
@@ -28,11 +28,15 @@ function App() {
   const [formData, setFormData] = useState(initialFormState);
   const [user, setUser] = useState("");
   const [HRVValue, setHRVValue] = useState("");
-  useEffect(async() => {
+ // const [recent, setRecent] = useState("");
+
+  useEffect(() => {
     fetchNotes();
+    listHRVs()
+
     getUsername();
     subscribeToHrv();
-  }, []);
+    }, []);
   
 
 
@@ -62,6 +66,22 @@ function App() {
     const apiData = await API.graphql({ query: getHrv,variables: {id: hrvId} });
     const HrvFromAPI = apiData.data.getHRV.value;
     setHRVValue(HrvFromAPI);
+  }  
+
+  async function listHRVs() {
+    console.log("IDEFAJUOSJFA");
+    const apiData = await API.graphql({ query: listHrVs });
+    const HRVFromAPI = apiData.data.listHRVs.items;
+    let datetime = "0";
+    let idd =0;
+    await Promise.all(HRVFromAPI.map(async hrv => {
+      if(hrv.createdAt>datetime)
+      {
+        datetime = hrv.createdAt;
+        idd = hrv.id;
+      }
+    }))
+    getHrvValue(idd)
   }  
   
   async function subscribeToHrv() {
@@ -149,7 +169,19 @@ function App() {
               </div>
             </div>
             <div className="float-none" />
-            <div className="graph"><canvas id="bpChart" style={{position: 'relative', zIndex: 100}} /></div>
+            <div className="graph">      
+        <LineChart
+          width={730}
+          height={250}
+          data={json}
+          margin={{ top: 2, right: 30, left: 60, bottom: 5 }}
+        >
+          <XAxis  />
+          <YAxis />
+          <Legend verticalAlign="top" height={20} iconSize={0}/>
+          <Tooltip/>
+          <Line name="Recent Pulse Wave" dot={false} type="monotone" dataKey="Samples" stroke="#8884d8" />
+        </LineChart></div>
           </div>
           <div className="split-container">
             <div className="split">
@@ -158,12 +190,12 @@ function App() {
               <div className="split-graph"><canvas id="temperatureGraph" /></div>
             </div>
             <div className="split">
-              <h3>Calories burned</h3>
-              <div className="calories">537</div>
+              <h3>HRV</h3>
+              <div className="calories">{HRVValue}</div>
               <div className="split-graph"><canvas id="calorieGraph" /></div>
             </div>
             <div className="split">
-              <h3>Heart rate</h3>
+              <h3>Resting Heart rate</h3>
               <div className="heart-rate">87</div>
               <div className="split-graph"><canvas id="heartRateGraph" /></div>
             </div>

@@ -51,9 +51,7 @@ export const listHrVs = /* GraphQL */ `
     listHRVs(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        value
         createdAt
-        updatedAt
       }
       nextToken
     }

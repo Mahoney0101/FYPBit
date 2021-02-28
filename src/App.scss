@@ -369,11 +369,11 @@ body {
 		.calories {
 			@extend .temperature;
 			&:before {
-				background: url("https://svgshare.com/i/52_.svg");
+				background: url("https://svgshare.com/i/51m.svg");
 				background-size: 35px 35px;
 			}
 			&:after {
-				content: "cal";
+				content: "ms";
 				font-size: 0.5em;
 				right: 30px;
 				bottom: -9px;
@@ -452,6 +452,7 @@ body {
 		.sleep-graph {
 			width: 70%;
 			float: left;
+			margin-bottom:50px;
 			.sleep-graph-container {
 				width: 80%;
 				margin: auto;
@@ -650,7 +651,7 @@ body {
 
 .graph {
 	width: 110%;
-	margin-top: 70px;
+	//margin-top: 70px;
 	margin-left: -7%;
 	height: 125px;
 	z-index: 0;
@@ -734,7 +735,19 @@ select {
 }
 
 #sleepChart {
-	margin: 50px 0;
-	height: 200px;
+	margin: 50px 0; 
+	height: 200px; 
+}
+.recharts-wrapper{
+	position: absolute !important;
+	cursor: default !important;
+	width: 730px !important;
+	height: 220px !important;
+	z-index: 5000 !important;
+	}
+.recharts-surface{
+	width:100% !important;
+	height:100% !important;
+	//viewBox: 0 0 100% 100%
 }
 
