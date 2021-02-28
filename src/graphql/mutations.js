@@ -85,3 +85,51 @@ export const deleteHrv = /* GraphQL */ `
     }
   }
 `;
+export const createUserStats = /* GraphQL */ `
+  mutation CreateUserStats(
+    $input: CreateUserStatsInput!
+    $condition: ModelUserStatsConditionInput
+  ) {
+    createUserStats(input: $input, condition: $condition) {
+      id
+      username
+      height
+      weight
+      age
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateUserStats = /* GraphQL */ `
+  mutation UpdateUserStats(
+    $input: UpdateUserStatsInput!
+    $condition: ModelUserStatsConditionInput
+  ) {
+    updateUserStats(input: $input, condition: $condition) {
+      id
+      username
+      height
+      weight
+      age
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteUserStats = /* GraphQL */ `
+  mutation DeleteUserStats(
+    $input: DeleteUserStatsInput!
+    $condition: ModelUserStatsConditionInput
+  ) {
+    deleteUserStats(input: $input, condition: $condition) {
+      id
+      username
+      height
+      weight
+      age
+      createdAt
+      updatedAt
+    }
+  }
+`;

@@ -41,9 +41,9 @@ export const onCreateHrv = /* GraphQL */ `
   subscription OnCreateHrv {
     onCreateHRV {
       id
-      # value
-      # createdAt
-      # updatedAt
+      value
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -62,6 +62,45 @@ export const onDeleteHrv = /* GraphQL */ `
     onDeleteHRV {
       id
       value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateUserStats = /* GraphQL */ `
+  subscription OnCreateUserStats {
+    onCreateUserStats {
+      id
+      username
+      height
+      weight
+      age
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateUserStats = /* GraphQL */ `
+  subscription OnUpdateUserStats {
+    onUpdateUserStats {
+      id
+      username
+      height
+      weight
+      age
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteUserStats = /* GraphQL */ `
+  subscription OnDeleteUserStats {
+    onDeleteUserStats {
+      id
+      username
+      height
+      weight
+      age
       createdAt
       updatedAt
     }

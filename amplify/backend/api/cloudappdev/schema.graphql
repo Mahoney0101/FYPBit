@@ -9,3 +9,11 @@ type HRV @model{
   id: ID!
   value: String!
 }
+
+type UserStats @model{
+  id: ID!
+  username: String!
+  height: String!
+  weight: String!
+  age: String!
+}

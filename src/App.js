@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './App.scss';
 import { Auth } from "@aws-amplify/auth";
 import  { API, graphqlOperation, Storage } from 'aws-amplify';import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
-import { listNotes , getHrv, listHrVs} from './graphql/queries';
+import { listNotes , getHrv, listHrVs, getUserStats} from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 import {
   LineChart,
-  CartesianGrid,
+ // CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
@@ -28,17 +28,20 @@ function App() {
   const [formData, setFormData] = useState(initialFormState);
   const [user, setUser] = useState("");
   const [HRVValue, setHRVValue] = useState("");
- // const [recent, setRecent] = useState("");
+  const [userDetails, setUserDetails] = useState("");
+  const [BMI, setBMI] = useState("");
 
   useEffect(() => {
     fetchNotes();
     listHRVs()
-
     getUsername();
+    getUserDetails("807f63c4-dbb9-4196-99af-344338a303c3");
     subscribeToHrv();
     }, []);
   
-
+  // function getBodyFat(BMI,){
+  //   (1.20 x BMI) + (0.23 x Age) - 16.2 = Body Fat Percentage.
+  // }
 
   async function getUsername(){
     await Auth.currentAuthenticatedUser()
@@ -47,7 +50,10 @@ function App() {
     });
   }
 
-
+  function getBMI(weight, height){
+    let BMI = (weight/(height*height))*10000;
+    setBMI(Math.round(BMI));
+  }
 
   async function fetchNotes() {
     const apiData = await API.graphql({ query: listNotes });
@@ -68,8 +74,15 @@ function App() {
     setHRVValue(HrvFromAPI);
   }  
 
+  async function getUserDetails(Id) {
+    const apiData = await API.graphql({ query: getUserStats,variables: {id: Id} });
+    const StatsFromAPI = apiData.data.getUserStats;
+    console.log(StatsFromAPI);
+    setUserDetails(StatsFromAPI);
+    getBMI(StatsFromAPI.weight, StatsFromAPI.height)
+  } 
+
   async function listHRVs() {
-    console.log("IDEFAJUOSJFA");
     const apiData = await API.graphql({ query: listHrVs });
     const HRVFromAPI = apiData.data.listHRVs.items;
     let datetime = "0";
@@ -130,14 +143,14 @@ function App() {
           </div>
           <div className="statistics">
             <h2>summary</h2>
-            <div className="age"><span className="title title-age">22</span></div>
-            <div className="weight"><span className="title title-weight">53 kg</span></div>
+            <div className="age"><span className="title title-age">{userDetails.age}</span></div>
+            <div className="weight"><span className="title title-weight">{userDetails.weight}</span></div>
             <div className="float-none" />
             <div className="height">
               <div className="icon" />
-              <div className="data"><span>172 cm</span></div>
+              <div className="data"><span>{userDetails.height}cm</span></div>
             </div>
-            <div className="bmi"><span className="title title-bmi">20.4</span></div>
+            <div className="bmi"><span className="title title-bmi">{BMI}</span></div>
             <div className="fat"><span className="title title-fat">11<span className="percentage">%</span></span></div>
             <div className="float-none" />
             <h2 className="allergies">allergies</h2>
@@ -155,7 +168,7 @@ function App() {
           <div className="header-container" id="headerContainer">
             <div className="nav">
               <div className="content">
-                <p> hi <span className="name">James</span>, it seems you are in</p><span className="shape score">good</span><span className="shape"> shape</span>
+                <p> hi <span className="name">{user}</span>, it seems you are in</p><span className="shape score">good</span><span className="shape"> shape</span>
               </div>
             </div>
             <div className="select-boxes">
@@ -301,20 +314,7 @@ function App() {
     </div>
   ))
 }
-      </div>
-      <LineChart
-          width={730}
-          height={250}
-          data={json}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis  />
-          <YAxis />
-          <Tooltip/>
-          <Line dot={false} type="monotone" dataKey="Samples" stroke="#8884d8" />
-        </LineChart>
-        <br/>
+</div>
 
       <AmplifySignOut button-color="blue"/>
     </div>

@@ -51,7 +51,42 @@ export const listHrVs = /* GraphQL */ `
     listHRVs(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        value
         createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getUserStats = /* GraphQL */ `
+  query GetUserStats($id: ID!) {
+    getUserStats(id: $id) {
+      id
+      username
+      height
+      weight
+      age
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listUserStatss = /* GraphQL */ `
+  query ListUserStatss(
+    $filter: ModelUserStatsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUserStatss(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        username
+        height
+        weight
+        age
+        createdAt
+        updatedAt
       }
       nextToken
     }
