@@ -6,11 +6,9 @@ import { listNotes , getHrv, listHrVs, listUserStatss} from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 import {
   LineChart,
- // CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
- // Legend,
   Line
 } from "recharts";
 import jsonData from './HRVdata.json';
@@ -28,15 +26,14 @@ function App() {
   const [formData, setFormData] = useState(initialFormState);
   const [user, setUser] = useState("");
   const [HRVValue, setHRVValue] = useState("");
-  const [userDetails, setUserDetails] = useState("");
+  const [userDetails, setUserDetails] = useState(JSON.parse(`{"weight":"","age":"","height":""}`));
   const [BMI, setBMI] = useState("");
 
-  useEffect(() => {
-    fetchNotes();
-    listHRVs()
-    getUsername();
-    subscribeToHrv();
-    listUserDetails();
+  useEffect(async() => {
+    await fetchNotes();
+    await listHRVs()
+    await getUsername();
+    await subscribeToHrv();
     }, []);
   
 
@@ -44,7 +41,9 @@ function App() {
     await Auth.currentAuthenticatedUser()
     .then(user => {
       setUser(user.username);
+      listUserDetails(user.username);
     });
+
   }
 
   function getBMI(weight, height){
@@ -71,22 +70,12 @@ function App() {
     setHRVValue(HrvFromAPI);
   }  
 
-  // async function getUserDetails(Id) {
-  //   const apiData = await API.graphql({ query: getUserStats,variables: {id: Id} });
-  //   const StatsFromAPI = apiData.data.getUserStats;
-  //   console.log(StatsFromAPI);
-  //   setUserDetails(StatsFromAPI);
-  //   getBMI(StatsFromAPI.weight, StatsFromAPI.height)
-  // } 
-
-  async function listUserDetails() {
+  async function listUserDetails(username) {
     if(user == null){return;}
-    console.log(user);
     let filter = {
-              username: {eq:user}
+              username: {eq:username}
           };
     let apiData = await API.graphql(graphqlOperation(listUserStatss, { filter:filter}));
-    console.log(apiData);
     apiData = apiData.data.listUserStatss.items[0];
     setUserDetails(apiData);
     getBMI(apiData.weight, apiData.height)
@@ -292,7 +281,6 @@ function App() {
           </div>
         </div>
       </div>
-      <h1> {user} {HRVValue}</h1>
       <input
         onChange={e => setFormData({ ...formData, 'name': e.target.value})}
         placeholder="Note name"
