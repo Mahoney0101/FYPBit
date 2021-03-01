@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
+ // Legend,
   Line
 } from "recharts";
 import jsonData from './HRVdata.json';
@@ -191,7 +191,6 @@ function App() {
         >
           <XAxis  />
           <YAxis />
-          <Legend verticalAlign="top" height={20} iconSize={0}/>
           <Tooltip/>
           <Line name="Recent Pulse Wave" dot={false} type="monotone" dataKey="Samples" stroke="#8884d8" />
         </LineChart></div>
