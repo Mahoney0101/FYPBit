@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.scss';
 import { Auth } from "@aws-amplify/auth";
 import  { API, graphqlOperation, Storage } from 'aws-amplify';import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
-import { listNotes , getHrv, listHrVs, getUserStats} from './graphql/queries';
+import { listNotes , getHrv, listHrVs, listUserStatss} from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 import {
   LineChart,
@@ -35,13 +35,10 @@ function App() {
     fetchNotes();
     listHRVs()
     getUsername();
-    getUserDetails("807f63c4-dbb9-4196-99af-344338a303c3");
     subscribeToHrv();
+    listUserDetails();
     }, []);
   
-  // function getBodyFat(BMI,){
-  //   (1.20 x BMI) + (0.23 x Age) - 16.2 = Body Fat Percentage.
-  // }
 
   async function getUsername(){
     await Auth.currentAuthenticatedUser()
@@ -74,13 +71,26 @@ function App() {
     setHRVValue(HrvFromAPI);
   }  
 
-  async function getUserDetails(Id) {
-    const apiData = await API.graphql({ query: getUserStats,variables: {id: Id} });
-    const StatsFromAPI = apiData.data.getUserStats;
-    console.log(StatsFromAPI);
-    setUserDetails(StatsFromAPI);
-    getBMI(StatsFromAPI.weight, StatsFromAPI.height)
-  } 
+  // async function getUserDetails(Id) {
+  //   const apiData = await API.graphql({ query: getUserStats,variables: {id: Id} });
+  //   const StatsFromAPI = apiData.data.getUserStats;
+  //   console.log(StatsFromAPI);
+  //   setUserDetails(StatsFromAPI);
+  //   getBMI(StatsFromAPI.weight, StatsFromAPI.height)
+  // } 
+
+  async function listUserDetails() {
+    if(user == null){return;}
+    console.log(user);
+    let filter = {
+              username: {eq:user}
+          };
+    let apiData = await API.graphql(graphqlOperation(listUserStatss, { filter:filter}));
+    console.log(apiData);
+    apiData = apiData.data.listUserStatss.items[0];
+    setUserDetails(apiData);
+    getBMI(apiData.weight, apiData.height)
+  }  
 
   async function listHRVs() {
     const apiData = await API.graphql({ query: listHrVs });
