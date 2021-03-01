@@ -12,7 +12,7 @@ import './bootstrap-4.3.1-dist/css/bootstrap.css';
   
     return (
       <form onSubmit={e => { handleSubmit(e) }}>
-        <label>Chore description:</label>
+        <label>Age:</label>
         <br />
         <input 
           name='choreDesc' 
@@ -21,7 +21,7 @@ import './bootstrap-4.3.1-dist/css/bootstrap.css';
           onChange={e => setChoreDesc(e.target.value)}
         />
         <br/>
-        <label>Name:</label>
+        <label>Weight:</label>
         <br />
         <input 
           name='name' 
@@ -30,11 +30,11 @@ import './bootstrap-4.3.1-dist/css/bootstrap.css';
           onChange={e => setName(e.target.value)}
         />
         <br />
-        <label>Date:</label>
+        <label>Height:</label>
         <br />
         <input
           name='date' 
-          type='date'
+          type='text'
           value={date}
           onChange={e => setDate(e.target.value)}
         />

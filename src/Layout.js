@@ -4,8 +4,6 @@ import { NavMenu } from './NavMenu';
 import PropTypes from 'prop-types';
 
 export class Layout extends Component {
-  static displayName = Layout.name;
-
   render () {
     return (
       <div>
