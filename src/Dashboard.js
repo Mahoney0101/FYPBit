@@ -129,6 +129,7 @@ function Dashboard() {
     await API.graphql({ query: deleteNoteMutation, variables: { input: { id } }});
   }
 
+  
   async function onChange(e) {
     if (!e.target.files[0]) return
     const file = e.target.files[0];
@@ -197,7 +198,8 @@ function Dashboard() {
           <YAxis />
           <Tooltip/>
           <Line name="Recent Pulse Wave" dot={false} type="monotone" dataKey="Samples" stroke="#8884d8" />
-        </LineChart></div>
+        </LineChart>
+        </div>
           </div>
           <div className="split-container">
             <div className="split">

@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import './bootstrap-4.3.1-dist/css/bootstrap.css';
-//import UserForm from './Form.js';
 import reportWebVitals from './reportWebVitals';
 import Amplify from 'aws-amplify';
 import config from './aws-exports';
