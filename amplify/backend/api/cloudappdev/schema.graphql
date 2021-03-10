@@ -22,3 +22,8 @@ type RHR @model{
   id: ID!
   value: String!
 }
+
+type Temperature @model{
+  id: ID!
+  value: String!
+}

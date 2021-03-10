@@ -3,7 +3,7 @@ import './App.scss';
 import './bootstrap-4.3.1-dist/css/bootstrap.css';
 import { Auth } from "@aws-amplify/auth";
 import  { API, graphqlOperation, Storage } from 'aws-amplify';
-import { listNotes , getHrv, getRhr, listHrVs, listRhRs, listUserStatss} from './graphql/queries';
+import { listNotes , getHrv, getRhr, getTemperature, listHrVs, listRhRs, listTemperatures, listUserStatss} from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 // import {
 //   LineChart,
@@ -13,7 +13,7 @@ import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } fr
 //   Line
 // } from "recharts";
 //import jsonData from './HRVdata.json';
-import { onCreateHrv, onCreateRhr } from './graphql/subscriptions';
+import { onCreateHrv, onCreateRhr, onCreateTemperature } from './graphql/subscriptions';
 
 
 //import jsonDataH from './HRD.json';
@@ -28,20 +28,22 @@ function Dashboard() {
   const [notes, setNotes] = useState([]);
   const [formData, setFormData] = useState(initialFormState);
   const [user, setUser] = useState("");
+  const [TemperatureValue, setTemperatureValue] = useState("");
   const [HRVValue, setHRVValue] = useState("");
   const [RHRValue, setRHRValue] = useState("");
   const [userDetails, setUserDetails] = useState(JSON.parse(`{"weight":"","age":"","height":""}`));
   const [BMI, setBMI] = useState("");
 
   useEffect(async() => {
-    await fetchNotes();
+    //await fetchNotes();
     await listHRVs();
     await listRHRs();
+    await listTemps();
     await getUsername();
     await subscribeToHrv();
     await subscribeToRhr();
+    await subscribeToTemperature();
     }, []);
-  
 
   async function getUsername(){
     await Auth.currentAuthenticatedUser()
@@ -70,8 +72,8 @@ function Dashboard() {
     setNotes(apiData.data.listNotes.items);
   }  
 
-  async function getHrvValue() {
-    const apiData = await API.graphql({ query: getHrv,variables: {id: 'cd2933f4-b3a4-48e5-8b72-1d880fd58191'} });
+  async function getHrvValue(hrvId) {
+    const apiData = await API.graphql({ query: getHrv,variables: {id: hrvId} });
     const HrvFromAPI = apiData.data.getHRV.value;
     setHRVValue(HrvFromAPI);
   }  
@@ -79,8 +81,13 @@ function Dashboard() {
   async function getRhrValue(rhrId) {
     const apiData = await API.graphql({ query: getRhr,variables: {id: rhrId} });
     const RhrFromAPI = apiData.data.getRHR.value;
-    console.log(RhrFromAPI);
     setRHRValue(RhrFromAPI);
+  }  
+
+  async function getTemperatureValue(tempId) {
+    const apiData = await API.graphql({ query: getTemperature,variables: {id: tempId} });
+    const TemperatureFromAPI = apiData.data.getTemperature.value;
+    setTemperatureValue(TemperatureFromAPI);
   }  
 
   async function listUserDetails(username) {
@@ -121,8 +128,22 @@ function Dashboard() {
         idd = rhr.id;
       }
     }))
-   // console.log(idd);
     getRhrValue(idd)
+  }  
+
+  async function listTemps() {
+    const apiData = await API.graphql({ query: listTemperatures });
+    const TemperatureFromAPI = apiData.data.listTemperatures.items;
+    let datetime = "0";
+    let idd =0;
+    await Promise.all(TemperatureFromAPI.map(async temp => {
+      if(temp.createdAt>datetime)
+      {
+        datetime = temp.createdAt;
+        idd = temp.id;
+      }
+    }))
+    getTemperatureValue(idd)
   }  
   
   async function subscribeToHrv() {
@@ -134,7 +155,6 @@ function Dashboard() {
         }
       }
     });
-    
   }
 
   async function subscribeToRhr() {
@@ -146,7 +166,17 @@ function Dashboard() {
         }
       }
     });
-    
+  }
+
+  async function subscribeToTemperature() {
+    await API.graphql(graphqlOperation(onCreateTemperature))
+    .subscribe({
+      next: event => {
+        if (event){
+          getTemperatureValue(event.value.data.onCreateTemperature.id);
+        }
+      }
+    });
   }
 
   async function createNote() {
@@ -165,7 +195,6 @@ function Dashboard() {
     setNotes(newNotesArray);
     await API.graphql({ query: deleteNoteMutation, variables: { input: { id } }});
   }
-
   
   async function onChange(e) {
     if (!e.target.files[0]) return
@@ -241,7 +270,7 @@ function Dashboard() {
           <div className="split-container">
             <div className="split">
               <h3>Temperature</h3>
-              <div className="temperature">36.7</div>
+              <div className="temperature">{TemperatureValue}</div>
               <div className="split-graph"><canvas id="temperatureGraph" /></div>
             </div>
             <div className="split">

@@ -172,3 +172,42 @@ export const deleteRhr = /* GraphQL */ `
     }
   }
 `;
+export const createTemperature = /* GraphQL */ `
+  mutation CreateTemperature(
+    $input: CreateTemperatureInput!
+    $condition: ModelTemperatureConditionInput
+  ) {
+    createTemperature(input: $input, condition: $condition) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateTemperature = /* GraphQL */ `
+  mutation UpdateTemperature(
+    $input: UpdateTemperatureInput!
+    $condition: ModelTemperatureConditionInput
+  ) {
+    updateTemperature(input: $input, condition: $condition) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteTemperature = /* GraphQL */ `
+  mutation DeleteTemperature(
+    $input: DeleteTemperatureInput!
+    $condition: ModelTemperatureConditionInput
+  ) {
+    deleteTemperature(input: $input, condition: $condition) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;

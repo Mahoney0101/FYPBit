@@ -35,10 +35,10 @@ export const listNotes = /* GraphQL */ `
 export const getHrv = /* GraphQL */ `
   query GetHrv($id: ID!) {
     getHRV(id: $id) {
-      #id
+    #  id
       value
-      #createdAt
-      #updatedAt
+    #  createdAt
+    #  updatedAt
     }
   }
 `;
@@ -95,10 +95,10 @@ export const listUserStatss = /* GraphQL */ `
 export const getRhr = /* GraphQL */ `
   query GetRhr($id: ID!) {
     getRHR(id: $id) {
-      #id
+    #  id
       value
-      #createdAt
-     # updatedAt
+    #  createdAt
+    #  updatedAt
     }
   }
 `;
@@ -109,6 +109,33 @@ export const listRhRs = /* GraphQL */ `
     $nextToken: String
   ) {
     listRHRs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        value
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getTemperature = /* GraphQL */ `
+  query GetTemperature($id: ID!) {
+    getTemperature(id: $id) {
+    #  id
+      value
+    #  createdAt
+    #  updatedAt
+    }
+  }
+`;
+export const listTemperatures = /* GraphQL */ `
+  query ListTemperatures(
+    $filter: ModelTemperatureFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listTemperatures(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         value

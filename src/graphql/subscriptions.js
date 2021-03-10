@@ -136,3 +136,33 @@ export const onDeleteRhr = /* GraphQL */ `
     }
   }
 `;
+export const onCreateTemperature = /* GraphQL */ `
+  subscription OnCreateTemperature {
+    onCreateTemperature {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateTemperature = /* GraphQL */ `
+  subscription OnUpdateTemperature {
+    onUpdateTemperature {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteTemperature = /* GraphQL */ `
+  subscription OnDeleteTemperature {
+    onDeleteTemperature {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
