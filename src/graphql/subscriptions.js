@@ -106,3 +106,33 @@ export const onDeleteUserStats = /* GraphQL */ `
     }
   }
 `;
+export const onCreateRhr = /* GraphQL */ `
+  subscription OnCreateRhr {
+    onCreateRHR {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateRhr = /* GraphQL */ `
+  subscription OnUpdateRhr {
+    onUpdateRHR {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteRhr = /* GraphQL */ `
+  subscription OnDeleteRhr {
+    onDeleteRHR {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;

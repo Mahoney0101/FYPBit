@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import './App.scss';
 import './bootstrap-4.3.1-dist/css/bootstrap.css';
-
 import { Auth } from "@aws-amplify/auth";
 import  { API, graphqlOperation, Storage } from 'aws-amplify';
-import { listNotes , getHrv, listHrVs, listUserStatss} from './graphql/queries';
+import { listNotes , getHrv, getRhr, listHrVs, listRhRs, listUserStatss} from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
-import {
-  LineChart,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Line
-} from "recharts";
-import jsonData from './HRVdata.json';
-import { onCreateHrv } from './graphql/subscriptions';
+// import {
+//   LineChart,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   Line
+// } from "recharts";
+//import jsonData from './HRVdata.json';
+import { onCreateHrv, onCreateRhr } from './graphql/subscriptions';
 
 
 //import jsonDataH from './HRD.json';
 
 
 
-const json = JSON.parse(JSON.stringify(jsonData));
+//const json = JSON.parse(JSON.stringify(jsonData));
 //const jsonH = JSON.parse(JSON.stringify(jsonDataH));
 const initialFormState = { name: '', description: '' }
 
@@ -30,14 +29,17 @@ function Dashboard() {
   const [formData, setFormData] = useState(initialFormState);
   const [user, setUser] = useState("");
   const [HRVValue, setHRVValue] = useState("");
+  const [RHRValue, setRHRValue] = useState("");
   const [userDetails, setUserDetails] = useState(JSON.parse(`{"weight":"","age":"","height":""}`));
   const [BMI, setBMI] = useState("");
 
   useEffect(async() => {
     await fetchNotes();
-    await listHRVs()
+    await listHRVs();
+    await listRHRs();
     await getUsername();
     await subscribeToHrv();
+    await subscribeToRhr();
     }, []);
   
 
@@ -68,10 +70,17 @@ function Dashboard() {
     setNotes(apiData.data.listNotes.items);
   }  
 
-  async function getHrvValue(hrvId) {
-    const apiData = await API.graphql({ query: getHrv,variables: {id: hrvId} });
+  async function getHrvValue() {
+    const apiData = await API.graphql({ query: getHrv,variables: {id: 'cd2933f4-b3a4-48e5-8b72-1d880fd58191'} });
     const HrvFromAPI = apiData.data.getHRV.value;
     setHRVValue(HrvFromAPI);
+  }  
+
+  async function getRhrValue(rhrId) {
+    const apiData = await API.graphql({ query: getRhr,variables: {id: rhrId} });
+    const RhrFromAPI = apiData.data.getRHR.value;
+    console.log(RhrFromAPI);
+    setRHRValue(RhrFromAPI);
   }  
 
   async function listUserDetails(username) {
@@ -99,6 +108,22 @@ function Dashboard() {
     }))
     getHrvValue(idd)
   }  
+
+  async function listRHRs() {
+    const apiData = await API.graphql({ query: listRhRs });
+    const RHRFromAPI = apiData.data.listRHRs.items;
+    let datetime = "0";
+    let idd =0;
+    await Promise.all(RHRFromAPI.map(async rhr => {
+      if(rhr.createdAt>datetime)
+      {
+        datetime = rhr.createdAt;
+        idd = rhr.id;
+      }
+    }))
+   // console.log(idd);
+    getRhrValue(idd)
+  }  
   
   async function subscribeToHrv() {
     await API.graphql(graphqlOperation(onCreateHrv))
@@ -106,6 +131,18 @@ function Dashboard() {
       next: event => {
         if (event){
           getHrvValue(event.value.data.onCreateHRV.id);
+        }
+      }
+    });
+    
+  }
+
+  async function subscribeToRhr() {
+    await API.graphql(graphqlOperation(onCreateRhr))
+    .subscribe({
+      next: event => {
+        if (event){
+          getRhrValue(event.value.data.onCreateRhr.id);
         }
       }
     });
@@ -156,7 +193,7 @@ function Dashboard() {
               <div className="data"><span>{userDetails.height}cm</span></div>
             </div>
             <div className="bmi"><span className="title title-bmi">{BMI}</span></div>
-            <div className="fat"><span className="title title-fat">11<span className="percentage">%</span></span></div>
+            {/* <div className="fat"><span className="title title-fat">11<span className="percentage">%</span></span></div> */}
             <div className="float-none" />
             <h2 className="allergies">allergies</h2>
             <div className="row">peanuts<div className="severity">
@@ -178,17 +215,17 @@ function Dashboard() {
             </div>
             <div className="select-boxes">
               <div className="content">
-                <div className="select-wrapper"><select>
+                {/* <div className="select-wrapper"><select>
                     <option>Bl. Pressure</option>
                   </select></div>
                 <div className="select-wrapper"><select>
                     <option>Today</option>
-                  </select></div>
+                  </select></div> */}
               </div>
             </div>
             <div className="float-none" />
             <div className="graph">      
-        <LineChart
+        {/* <LineChart
           width={730}
           height={250}
           data={json}
@@ -198,7 +235,7 @@ function Dashboard() {
           <YAxis />
           <Tooltip/>
           <Line name="Recent Pulse Wave" dot={false} type="monotone" dataKey="Samples" stroke="#8884d8" />
-        </LineChart>
+        </LineChart> */}
         </div>
           </div>
           <div className="split-container">
@@ -214,11 +251,11 @@ function Dashboard() {
             </div>
             <div className="split">
               <h3>Resting Heart rate</h3>
-              <div className="heart-rate">87</div>
+              <div className="heart-rate">{RHRValue}</div>
               <div className="split-graph"><canvas id="heartRateGraph" /></div>
             </div>
           </div>
-          <div className="sleep">
+          {/* <div className="sleep">
             <div className="totals">
               <div className="collective"><span className="hours">8</span><span className="minutes">25</span>
                 <p>Total sleep time</p>
@@ -237,7 +274,7 @@ function Dashboard() {
                 <div className="chart-container"><canvas id="sleepChart" /></div>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="float-none" />
           <div className="split-container">
             <div className="split bottom">
@@ -261,7 +298,7 @@ function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="split bottom">
+            {/* <div className="split bottom">
               <h2>Doctors around</h2>
               <table className="doctor-grid">
                 <tbody><tr>
@@ -278,11 +315,11 @@ function Dashboard() {
                     </td>
                   </tr>
                 </tbody></table>
-            </div>
+            </div> */}
             <div className="split bottom">
               <div id="map" />
               <div className="map-overlay">
-                <h2>Steps today</h2><span className="steps">4578</span><span className="distance">1.7 km</span>
+                <h2>Steps today</h2><span className="steps">steps api</span><span className="distance"></span>
               </div>
             </div>
           </div>

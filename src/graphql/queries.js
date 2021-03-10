@@ -35,10 +35,10 @@ export const listNotes = /* GraphQL */ `
 export const getHrv = /* GraphQL */ `
   query GetHrv($id: ID!) {
     getHRV(id: $id) {
-      id
+      #id
       value
-      createdAt
-      updatedAt
+      #createdAt
+      #updatedAt
     }
   }
 `;
@@ -92,4 +92,30 @@ export const listUserStatss = /* GraphQL */ `
     }
   }
 `;
-
+export const getRhr = /* GraphQL */ `
+  query GetRhr($id: ID!) {
+    getRHR(id: $id) {
+      #id
+      value
+      #createdAt
+     # updatedAt
+    }
+  }
+`;
+export const listRhRs = /* GraphQL */ `
+  query ListRhRs(
+    $filter: ModelRHRFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listRHRs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        value
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

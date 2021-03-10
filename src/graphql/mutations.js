@@ -133,3 +133,42 @@ export const deleteUserStats = /* GraphQL */ `
     }
   }
 `;
+export const createRhr = /* GraphQL */ `
+  mutation CreateRhr(
+    $input: CreateRHRInput!
+    $condition: ModelRHRConditionInput
+  ) {
+    createRHR(input: $input, condition: $condition) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateRhr = /* GraphQL */ `
+  mutation UpdateRhr(
+    $input: UpdateRHRInput!
+    $condition: ModelRHRConditionInput
+  ) {
+    updateRHR(input: $input, condition: $condition) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteRhr = /* GraphQL */ `
+  mutation DeleteRhr(
+    $input: DeleteRHRInput!
+    $condition: ModelRHRConditionInput
+  ) {
+    deleteRHR(input: $input, condition: $condition) {
+      id
+      value
+      createdAt
+      updatedAt
+    }
+  }
+`;

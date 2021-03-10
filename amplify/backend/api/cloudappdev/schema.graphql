@@ -17,3 +17,8 @@ type UserStats @model{
   weight: String!
   age: String!
 }
+
+type RHR @model{
+  id: ID!
+  value: String!
+}
