@@ -162,7 +162,7 @@ function Dashboard() {
     .subscribe({
       next: event => {
         if (event){
-          getRhrValue(event.value.data.onCreateRhr.id);
+          getRhrValue(event.value.data.onCreateRHR.id);
         }
       }
     });
