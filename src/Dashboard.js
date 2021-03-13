@@ -279,7 +279,7 @@ function Dashboard() {
               <div className="split-graph"><canvas id="calorieGraph" /></div>
             </div>
             <div className="split">
-              <h3>Resting Heart rate</h3>
+              <h3>Session AVG HR</h3>
               <div className="heart-rate">{RHRValue}</div>
               <div className="split-graph"><canvas id="heartRateGraph" /></div>
             </div>
