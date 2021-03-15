@@ -146,3 +146,34 @@ export const listTemperatures = /* GraphQL */ `
     }
   }
 `;
+export const getModelPrediction = /* GraphQL */ `
+  query GetModelPrediction($id: ID!) {
+    getModelPrediction(id: $id) {
+    #  id
+      prediction
+    #  createdAt
+    #  updatedAt
+    }
+  }
+`;
+export const listModelPredictions = /* GraphQL */ `
+  query ListModelPredictions(
+    $filter: ModelModelPredictionFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listModelPredictions(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        prediction
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

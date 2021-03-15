@@ -27,3 +27,8 @@ type Temperature @model{
   id: ID!
   value: String!
 }
+
+type ModelPrediction @model{
+  id: ID!
+  prediction: String!
+}

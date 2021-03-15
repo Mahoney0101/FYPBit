@@ -3,7 +3,7 @@ import './App.scss';
 import './bootstrap-4.3.1-dist/css/bootstrap.css';
 import { Auth } from "@aws-amplify/auth";
 import  { API, graphqlOperation, Storage } from 'aws-amplify';
-import { listNotes , getHrv, getRhr, getTemperature, listHrVs, listRhRs, listTemperatures, listUserStatss} from './graphql/queries';
+import { listNotes , getHrv, getRhr, getTemperature, listHrVs, listRhRs, listTemperatures, listUserStatss, getModelPrediction, listModelPredictions} from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 // import {
 //   LineChart,
@@ -14,12 +14,7 @@ import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } fr
 // } from "recharts";
 //import jsonData from './HRVdata.json';
 import { onCreateHrv, onCreateRhr, onCreateTemperature } from './graphql/subscriptions';
-
-
 //import jsonDataH from './HRD.json';
-
-
-
 //const json = JSON.parse(JSON.stringify(jsonData));
 //const jsonH = JSON.parse(JSON.stringify(jsonDataH));
 const initialFormState = { name: '', description: '' }
@@ -31,14 +26,16 @@ function Dashboard() {
   const [TemperatureValue, setTemperatureValue] = useState("");
   const [HRVValue, setHRVValue] = useState("");
   const [RHRValue, setRHRValue] = useState("");
+  const [PredictionValue, setPredictionValue] = useState("");
+
   const [userDetails, setUserDetails] = useState(JSON.parse(`{"weight":"","age":"","height":""}`));
   const [BMI, setBMI] = useState("");
 
   useEffect(async() => {
-    //await fetchNotes();
     await listHRVs();
     await listRHRs();
     await listTemps();
+    await listPredictions();
     await getUsername();
     await subscribeToHrv();
     await subscribeToRhr();
@@ -88,6 +85,12 @@ function Dashboard() {
     const apiData = await API.graphql({ query: getTemperature,variables: {id: tempId} });
     const TemperatureFromAPI = apiData.data.getTemperature.value;
     setTemperatureValue(TemperatureFromAPI);
+  }  
+
+  async function getPrediction(predId) {
+    const apiData = await API.graphql({ query: getModelPrediction,variables: {id: predId} });
+    const PredFromAPI = apiData.data.getModelPrediction.prediction;
+    setPredictionValue(PredFromAPI);
   }  
 
   async function listUserDetails(username) {
@@ -144,6 +147,21 @@ function Dashboard() {
       }
     }))
     getTemperatureValue(idd)
+  }  
+
+  async function listPredictions() {
+    const apiData = await API.graphql({ query: listModelPredictions });
+    const PredFromAPI = apiData.data.listModelPredictions.items;
+    let datetime = "0";
+    let idd = 0;
+    await Promise.all(PredFromAPI.map(async pred => {
+      if(pred.createdAt>datetime)
+      {
+        datetime = pred.createdAt;
+        idd = pred.id;
+      }
+    }))
+    getPrediction(idd)
   }  
   
   async function subscribeToHrv() {
@@ -207,7 +225,6 @@ function Dashboard() {
   return (
     <div className="App">
        <div className="container">
-
         <div className="summary-column">
           <div className="profile-img" id="profileImage"><img src="https://placeimg.com/400/400/face" />
             <div className="name">James <br /> Mahoney</div>
@@ -222,7 +239,6 @@ function Dashboard() {
               <div className="data"><span>{userDetails.height}cm</span></div>
             </div>
             <div className="bmi"><span className="title title-bmi">{BMI}</span></div>
-            {/* <div className="fat"><span className="title title-fat">11<span className="percentage">%</span></span></div> */}
             <div className="float-none" />
             <h2 className="allergies">allergies</h2>
             <div className="row">peanuts<div className="severity">
@@ -244,12 +260,6 @@ function Dashboard() {
             </div>
             <div className="select-boxes">
               <div className="content">
-                {/* <div className="select-wrapper"><select>
-                    <option>Bl. Pressure</option>
-                  </select></div>
-                <div className="select-wrapper"><select>
-                    <option>Today</option>
-                  </select></div> */}
               </div>
             </div>
             <div className="float-none" />
@@ -284,71 +294,12 @@ function Dashboard() {
               <div className="split-graph"><canvas id="heartRateGraph" /></div>
             </div>
           </div>
-          {/* <div className="sleep">
-            <div className="totals">
-              <div className="collective"><span className="hours">8</span><span className="minutes">25</span>
-                <p>Total sleep time</p>
-              </div>
-              <div className="split first">6h 12m<p>Deep</p>
-              </div>
-              <div className="split">2h 13m<p>Light</p>
-              </div>
-            </div>
-            <div className="sleep-graph">
-              <div className="sleep-graph-container">
-                <h2> Sleep Analytics</h2>
-                <div className="sleep-select-wrapper"><select>
-                    <option value="today">Today</option>
-                  </select></div>
-                <div className="chart-container"><canvas id="sleepChart" /></div>
-              </div>
-            </div>
-          </div> */}
           <div className="float-none" />
           <div className="split-container">
             <div className="split bottom">
-              <h2>Appointments</h2>
+              <h2>Lung Recording Prediction</h2>
               <div className="appointments">
-                <div className="calendar-container">
-                  <div className="calendar">25<span className="date">th</span><span className="month">Jul</span></div>
-                  <div className="content">
-                    <table className="appointment-table">
-                      <tbody><tr>
-                          <td id="time">13:00</td>
-                        </tr>
-                        <tr>
-                          <td id="title">Dentist</td>
-                        </tr>
-                        <tr>
-                          <td id="name">Jozef Novotny</td>
-                        </tr>
-                      </tbody></table>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* <div className="split bottom">
-              <h2>Doctors around</h2>
-              <table className="doctor-grid">
-                <tbody><tr>
-                    <td height={65}><img src="https://placeimg.com/65/65/people" /></td>
-                    <td><img src="https://placeimg.com/65/65/face" /></td>
-                    <td><img src="https://placeimg.com/65/65/people" /></td>
-                  </tr>
-                  <tr>
-                    <td><img src="https://placeimg.com/65/65/face" /></td>
-                    <td><img src="https://placeimg.com/65/65/people" /></td>
-                    <td id="expand">
-                      <div className="background">+8
-                      </div>
-                    </td>
-                  </tr>
-                </tbody></table>
-            </div> */}
-            <div className="split bottom">
-              <div id="map" />
-              <div className="map-overlay">
-                <h2>Steps today</h2><span className="steps">steps api</span><span className="distance"></span>
+                {PredictionValue}
               </div>
             </div>
           </div>
@@ -368,9 +319,7 @@ function Dashboard() {
   type="file"
   onChange={onChange}
 />
-     
       <button onClick={createNote}>Create Note</button>
-      
       <div style={{marginBottom: 30}}>
       {
   notes.map(note => (
@@ -385,7 +334,6 @@ function Dashboard() {
   ))
 }
 </div>
-
       {/* <AmplifySignOut button-color="blue"/> */}
     </div>
   );

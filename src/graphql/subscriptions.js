@@ -41,9 +41,9 @@ export const onCreateHrv = /* GraphQL */ `
   subscription OnCreateHrv {
     onCreateHRV {
       id
-#      value
-#      createdAt
-#      updatedAt
+      value
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -110,9 +110,9 @@ export const onCreateRhr = /* GraphQL */ `
   subscription OnCreateRhr {
     onCreateRHR {
       id
-#      value
-#      createdAt
-#      updatedAt
+      value
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -140,9 +140,9 @@ export const onCreateTemperature = /* GraphQL */ `
   subscription OnCreateTemperature {
     onCreateTemperature {
       id
-#      value
-#      createdAt
-#      updatedAt
+      value
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -161,6 +161,36 @@ export const onDeleteTemperature = /* GraphQL */ `
     onDeleteTemperature {
       id
       value
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateModelPrediction = /* GraphQL */ `
+  subscription OnCreateModelPrediction {
+    onCreateModelPrediction {
+      id
+      prediction
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateModelPrediction = /* GraphQL */ `
+  subscription OnUpdateModelPrediction {
+    onUpdateModelPrediction {
+      id
+      prediction
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteModelPrediction = /* GraphQL */ `
+  subscription OnDeleteModelPrediction {
+    onDeleteModelPrediction {
+      id
+      prediction
       createdAt
       updatedAt
     }

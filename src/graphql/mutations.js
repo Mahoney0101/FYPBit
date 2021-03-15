@@ -211,3 +211,42 @@ export const deleteTemperature = /* GraphQL */ `
     }
   }
 `;
+export const createModelPrediction = /* GraphQL */ `
+  mutation CreateModelPrediction(
+    $input: CreateModelPredictionInput!
+    $condition: ModelModelPredictionConditionInput
+  ) {
+    createModelPrediction(input: $input, condition: $condition) {
+      id
+      prediction
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateModelPrediction = /* GraphQL */ `
+  mutation UpdateModelPrediction(
+    $input: UpdateModelPredictionInput!
+    $condition: ModelModelPredictionConditionInput
+  ) {
+    updateModelPrediction(input: $input, condition: $condition) {
+      id
+      prediction
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteModelPrediction = /* GraphQL */ `
+  mutation DeleteModelPrediction(
+    $input: DeleteModelPredictionInput!
+    $condition: ModelModelPredictionConditionInput
+  ) {
+    deleteModelPrediction(input: $input, condition: $condition) {
+      id
+      prediction
+      createdAt
+      updatedAt
+    }
+  }
+`;
