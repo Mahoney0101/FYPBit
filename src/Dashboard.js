@@ -13,7 +13,7 @@ import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } fr
 //   Line
 // } from "recharts";
 //import jsonData from './HRVdata.json';
-import { onCreateHrv, onCreateRhr, onCreateTemperature } from './graphql/subscriptions';
+import { onCreateHrv, onCreateRhr, onCreateTemperature, onCreateModelPrediction } from './graphql/subscriptions';
 //import jsonDataH from './HRD.json';
 //const json = JSON.parse(JSON.stringify(jsonData));
 //const jsonH = JSON.parse(JSON.stringify(jsonDataH));
@@ -37,9 +37,10 @@ function Dashboard() {
     await listTemps();
     await listPredictions();
     await getUsername();
-    await subscribeToHrv();
-    await subscribeToRhr();
-    await subscribeToTemperature();
+    subscribeToHrv();
+    subscribeToRhr();
+    subscribeToTemperature();
+    subscribeToPrediction();
     }, []);
 
   async function getUsername(){
@@ -192,6 +193,17 @@ function Dashboard() {
       next: event => {
         if (event){
           getTemperatureValue(event.value.data.onCreateTemperature.id);
+        }
+      }
+    });
+  }
+
+  async function subscribeToPrediction() {
+    await API.graphql(graphqlOperation(onCreateModelPrediction))
+    .subscribe({
+      next: event => {
+        if (event){
+          getPrediction(event.value.data.onCreateModelPrediction.id);
         }
       }
     });
