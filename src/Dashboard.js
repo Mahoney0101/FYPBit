@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './App.scss';
 import './bootstrap-4.3.1-dist/css/bootstrap.css';
 import { Auth } from "@aws-amplify/auth";
-import  { API, graphqlOperation, Storage } from 'aws-amplify';
-import { listNotes , getHrv, getRhr, getTemperature, listHrVs, listRhRs, listTemperatures, listUserStatss, getModelPrediction, listModelPredictions} from './graphql/queries';
-import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
+import  { API, graphqlOperation } from 'aws-amplify';
+import { getHrv, getRhr, getTemperature, listHrVs, listRhRs, listTemperatures, listUserStatss, getModelPrediction, listModelPredictions} from './graphql/queries';
 // import {
 //   LineChart,
 //   XAxis,
@@ -17,26 +16,22 @@ import { onCreateHrv, onCreateRhr, onCreateTemperature, onCreateModelPrediction 
 //import jsonDataH from './HRD.json';
 //const json = JSON.parse(JSON.stringify(jsonData));
 //const jsonH = JSON.parse(JSON.stringify(jsonDataH));
-const initialFormState = { name: '', description: '' }
 
 function Dashboard() {
-  const [notes, setNotes] = useState([]);
-  const [formData, setFormData] = useState(initialFormState);
   const [user, setUser] = useState("");
   const [TemperatureValue, setTemperatureValue] = useState("");
   const [HRVValue, setHRVValue] = useState("");
   const [RHRValue, setRHRValue] = useState("");
   const [PredictionValue, setPredictionValue] = useState("");
-
   const [userDetails, setUserDetails] = useState(JSON.parse(`{"weight":"","age":"","height":""}`));
   const [BMI, setBMI] = useState("");
 
   useEffect(async() => {
-    await listHRVs();
-    await listRHRs();
-    await listTemps();
-    await listPredictions();
-    await getUsername();
+    listHRVs();
+    listRHRs();
+    listTemps();
+    listPredictions();
+    getUsername();
     subscribeToHrv();
     subscribeToRhr();
     subscribeToTemperature();
@@ -56,19 +51,6 @@ function Dashboard() {
     let BMI = (weight/(height*height))*10000;
     setBMI(Math.round(BMI));
   }
-
-  async function fetchNotes() {
-    const apiData = await API.graphql({ query: listNotes });
-    const notesFromAPI = apiData.data.listNotes.items;
-    await Promise.all(notesFromAPI.map(async note => {
-      if (note.image) {
-        const image = await Storage.get(note.image);
-        note.image = image;
-      }
-      return note;
-    }))
-    setNotes(apiData.data.listNotes.items);
-  }  
 
   async function getHrvValue(hrvId) {
     const apiData = await API.graphql({ query: getHrv,variables: {id: hrvId} });
@@ -209,31 +191,6 @@ function Dashboard() {
     });
   }
 
-  async function createNote() {
-    if (!formData.name || !formData.description) return;
-    await API.graphql({ query: createNoteMutation, variables: { input: formData } });
-    if (formData.image) {
-      const image = await Storage.get(formData.image);
-      formData.image = image;
-    }
-    setNotes([ ...notes, formData ]);
-    setFormData(initialFormState);
-  }
-
-  async function deleteNote({ id }) {
-    const newNotesArray = notes.filter(note => note.id !== id);
-    setNotes(newNotesArray);
-    await API.graphql({ query: deleteNoteMutation, variables: { input: { id } }});
-  }
-  
-  async function onChange(e) {
-    if (!e.target.files[0]) return
-    const file = e.target.files[0];
-    setFormData({ ...formData, image: file.name });
-    await Storage.put(file.name, file);
-    fetchNotes();
-  }
-
   return (
     <div className="App">
        <div className="container">
@@ -317,37 +274,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
-      <input
-        onChange={e => setFormData({ ...formData, 'name': e.target.value})}
-        placeholder="Note name"
-        value={formData.name}
-      />
-      <input
-        onChange={e => setFormData({ ...formData, 'description': e.target.value})}
-        placeholder="Note description"
-        value={formData.description}
-      />
-      <input
-  type="file"
-  onChange={onChange}
-/>
-      <button onClick={createNote}>Create Note</button>
-      <div style={{marginBottom: 30}}>
-      {
-  notes.map(note => (
-    <div key={note.id || note.name}>
-      <h2>{note.name}</h2>
-      <p>{note.description}</p>
-      <button onClick={() => deleteNote(note)}>Delete note</button>
-      {
-        note.image && <img src={note.image} style={{width: 400}} />
-      }
-    </div>
-  ))
-}
 </div>
-      {/* <AmplifySignOut button-color="blue"/> */}
-    </div>
   );
 }
 
