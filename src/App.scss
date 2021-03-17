@@ -16,6 +16,19 @@ body {
 	justify-content: center;
 }
 
+.floating-block {
+	position:absolute;
+	top:25%;
+	width: 60%;
+	background-color: whitesmoke;
+	z-index: 5;
+	margin-left:10%;
+	padding: 5%;
+	border-radius: 5%;
+	text-decoration: none;
+	//margin-left: -80%;
+}
+
 .menu-column {
 	position: relative;
 	width: 6%;

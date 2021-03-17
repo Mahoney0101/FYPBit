@@ -4,18 +4,8 @@ import './bootstrap-4.3.1-dist/css/bootstrap.css';
 import { Auth } from "@aws-amplify/auth";
 import  { API, graphqlOperation } from 'aws-amplify';
 import { getHrv, getRhr, getTemperature, listHrVs, listRhRs, listTemperatures, listUserStatss, getModelPrediction, listModelPredictions} from './graphql/queries';
-// import {
-//   LineChart,
-//   XAxis,
-//   YAxis,
-//   Tooltip,
-//   Line
-// } from "recharts";
-//import jsonData from './HRVdata.json';
 import { onCreateHrv, onCreateRhr, onCreateTemperature, onCreateModelPrediction } from './graphql/subscriptions';
-//import jsonDataH from './HRD.json';
-//const json = JSON.parse(JSON.stringify(jsonData));
-//const jsonH = JSON.parse(JSON.stringify(jsonDataH));
+
 
 function Dashboard() {
   const [user, setUser] = useState("");
@@ -25,18 +15,40 @@ function Dashboard() {
   const [PredictionValue, setPredictionValue] = useState("");
   const [userDetails, setUserDetails] = useState(JSON.parse(`{"weight":"","age":"","height":""}`));
   const [BMI, setBMI] = useState("");
+  const [healthStatus, setHealth] = useState("Calculating...");
+  const [viewStatus, setViewStatus] = useState(true);
+  const [issueslist, setIssues] = useState("");
+
 
   useEffect(async() => {
-    listHRVs();
-    listRHRs();
-    listTemps();
-    listPredictions();
     getUsername();
+    await listHRVs();
+    await listRHRs();
+    await listTemps();
+    await listPredictions();
     subscribeToHrv();
     subscribeToRhr();
     subscribeToTemperature();
     subscribeToPrediction();
     }, []);
+
+
+useEffect(() => {
+  calculateHeath();
+}, [PredictionValue]);
+
+function IssuesBlock() {
+  return (
+      <div className="floating-block">
+      <h1>Results of last session</h1>
+      <ul>
+        {issueslist}
+      </ul>
+      <button onClick={() => {setViewStatus(false)}}>Close Window</button>
+    </div>
+  )
+}
+
 
   async function getUsername(){
     await Auth.currentAuthenticatedUser()
@@ -74,6 +86,7 @@ function Dashboard() {
     const apiData = await API.graphql({ query: getModelPrediction,variables: {id: predId} });
     const PredFromAPI = apiData.data.getModelPrediction.prediction;
     setPredictionValue(PredFromAPI);
+    calculateHeath();
   }  
 
   async function listUserDetails(username) {
@@ -191,8 +204,120 @@ function Dashboard() {
     });
   }
 
+  const tempScore = () => {
+    let temp = "";
+    let temphigh = 36.9;
+    let templow = 35;
+    if(TemperatureValue<templow){
+      temp = "low";
+    }
+    else if(TemperatureValue>temphigh){
+      temp = "high";
+    }
+    else{
+      temp = "Good";
+    }
+    return "You have a "+temp+ " temperature. temp is "+ TemperatureValue;
+  }
+
+  const BMIScore = () => {
+    let BMIScore = "";
+    let BMIHigh = 25;
+    let BMILow = 19; 
+    let BMIObese = 30;
+
+    if(BMI<BMILow){
+      BMIScore = "underweight";
+    }
+    else if(BMI>=BMILow && BMI <= BMIHigh){
+      BMIScore = "Healthy";
+    }
+    else if(BMI>BMIHigh&& BMI<BMIObese){
+      BMIScore = "overweight";
+    }
+    else{
+      BMIScore = "obese";
+    }
+    return "You are "+BMIScore+" with a BMI of "+ BMI 
+  }
+
+  const predictionScore = () => {
+    let prediction;
+
+    if(PredictionValue != "Healthy"){
+      prediction = PredictionValue;
+    }
+    else{
+      prediction = "Good";
+    }
+    return "Consult a doctor, This AI model predicts you have "+ prediction;
+  } 
+  const Between = (num,low, high) =>{
+    if(num>=low&&num<=high)
+    {
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+  const HRVScore = () => {
+    let HRVScore;
+    let age = userDetails.age;
+    if(age>17&&age<26&&Between(HRVValue,60, 76))
+    {
+      HRVScore = "Good";
+    }
+    else if(age>=26&&age<36&&Between(HRVValue,55,72))
+    {
+      HRVScore = "Good";
+    }
+    else if(age>=36&&age<46&&Between(HRVValue,52,69)){
+      HRVScore = "Good";
+    }
+    else if(age>=46&&age<56&&Between(HRVValue,47,68))
+    {
+      HRVScore = "Good";
+    }
+    else if(age>=56&&age<66&&Between(HRVValue,42,64)){
+      HRVScore = "Good";
+    }
+    else if(age>=66&&age<76&&Between(HRVValue,40,63))
+    {
+      HRVScore = "Good";
+    }
+    else if(age>75&&Between(33,68))
+    {
+      HRVScore = "Good";
+    }
+    else{
+      HRVScore = "HRV not in normal range, this could be normal if you are sick or have recently been stressed or participated in stressful activity. value is "+HRVValue;
+    }
+    return HRVScore
+  } 
+
+  const calculateHeath = () =>{
+    setTimeout(() => {  
+    let score = "";
+    let issuesb = [];
+    let goodIssues = [];
+    let hrv = HRVScore();
+    let lung = predictionScore();
+    let temp = tempScore();
+    let bmi = BMIScore();
+    let scores = [hrv, lung, temp, bmi];
+    scores.forEach(item => {item === "Good" ? goodIssues.push(item) : score = "Bad"; issuesb.push(item)});
+    setHealth(score);
+    setViewStatus(!viewStatus);
+    let issuesc = issuesb.map(item =>  {return <li key={item}>{item}</li>})
+    setIssues(issuesc);
+    setViewStatus(true);
+  }, 2000);
+  }
+
   return (
     <div className="App">
+      {viewStatus ? <IssuesBlock/> : null}
        <div className="container">
         <div className="summary-column">
           <div className="profile-img" id="profileImage"><img src="https://placeimg.com/400/400/face" />
@@ -224,7 +349,7 @@ function Dashboard() {
           <div className="header-container" id="headerContainer">
             <div className="nav">
               <div className="content">
-                <p> hi <span className="name">{user}</span>, it seems you are in</p><span className="shape score">good</span><span className="shape"> shape</span>
+                <p> hi <span className="name">{user}</span>, it seems you are in</p><span className="shape score">{healthStatus}</span><span className="shape"> shape</span>
               </div>
             </div>
             <div className="select-boxes">
@@ -233,17 +358,6 @@ function Dashboard() {
             </div>
             <div className="float-none" />
             <div className="graph">      
-        {/* <LineChart
-          width={730}
-          height={250}
-          data={json}
-          margin={{ top: 2, right: 30, left: 60, bottom: 5 }}
-        >
-          <XAxis  />
-          <YAxis />
-          <Tooltip/>
-          <Line name="Recent Pulse Wave" dot={false} type="monotone" dataKey="Samples" stroke="#8884d8" />
-        </LineChart> */}
         </div>
           </div>
           <div className="split-container">
