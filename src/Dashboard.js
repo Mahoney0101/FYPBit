@@ -265,34 +265,21 @@ function IssuesBlock() {
     let HRVScore;
     let age = userDetails.age;
     if(age>17&&age<26&&Between(HRVValue,60, 76))
-    {
       HRVScore = "Good";
-    }
     else if(age>=26&&age<36&&Between(HRVValue,55,72))
-    {
       HRVScore = "Good";
-    }
-    else if(age>=36&&age<46&&Between(HRVValue,52,69)){
+    else if(age>=36&&age<46&&Between(HRVValue,52,69))
       HRVScore = "Good";
-    }
     else if(age>=46&&age<56&&Between(HRVValue,47,68))
-    {
       HRVScore = "Good";
-    }
-    else if(age>=56&&age<66&&Between(HRVValue,42,64)){
+    else if(age>=56&&age<66&&Between(HRVValue,42,64))
       HRVScore = "Good";
-    }
     else if(age>=66&&age<76&&Between(HRVValue,40,63))
-    {
       HRVScore = "Good";
-    }
     else if(age>75&&Between(33,68))
-    {
       HRVScore = "Good";
-    }
-    else{
+    else
       HRVScore = "HRV not in normal range, this could be normal if you are sick or have recently been stressed or participated in stressful activity. value is "+HRVValue;
-    }
     return HRVScore
   } 
 
