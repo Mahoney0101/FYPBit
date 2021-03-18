@@ -16,7 +16,7 @@ function Dashboard() {
   const [userDetails, setUserDetails] = useState(JSON.parse(`{"weight":"","age":"","height":""}`));
   const [BMI, setBMI] = useState("");
   const [healthStatus, setHealth] = useState("Calculating...");
-  const [viewStatus, setViewStatus] = useState(true);
+  const [viewStatus, setViewStatus] = useState(false);
   const [issueslist, setIssues] = useState("");
 
 
@@ -284,7 +284,7 @@ function IssuesBlock() {
   } 
 
   const calculateHeath = () =>{
-    setTimeout(() => {  
+    if(BMI !== ""){ 
     let score = "";
     let issuesb = [];
     let goodIssues = [];
@@ -294,17 +294,16 @@ function IssuesBlock() {
     let bmi = BMIScore();
     let scores = [hrv, lung, temp, bmi];
     scores.forEach(item => {item === "Good" ? goodIssues.push(item) : score = "Bad"; issuesb.push(item)});
-    setHealth(score);
-    setViewStatus(!viewStatus);
+    setHealth(score);   
+    setViewStatus(true);
     let issuesc = issuesb.map(item =>  {return <li key={item}>{item}</li>})
     setIssues(issuesc);
-    setViewStatus(true);
-  }, 2000);
+    }
   }
 
   return (
     <div className="App">
-      {viewStatus ? <IssuesBlock/> : null}
+      {viewStatus ?  <IssuesBlock/> : null}
        <div className="container">
         <div className="summary-column">
           <div className="profile-img" id="profileImage"><img src="https://placeimg.com/400/400/face" />
