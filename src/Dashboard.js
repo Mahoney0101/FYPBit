@@ -49,7 +49,6 @@ function IssuesBlock() {
   )
 }
 
-
   async function getUsername(){
     await Auth.currentAuthenticatedUser()
     .then(user => {
@@ -246,11 +245,11 @@ function IssuesBlock() {
 
     if(PredictionValue != "Healthy"){
       prediction = PredictionValue;
+      return "Consult a doctor, This AI model predicts you have "+ prediction;
     }
     else{
-      prediction = "Good";
+      return "The AI model returned a prediction of Healthy"
     }
-    return "Consult a doctor, This AI model predicts you have "+ prediction;
   } 
   const Between = (num,low, high) =>{
     if(num>=low&&num<=high)
