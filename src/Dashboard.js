@@ -245,7 +245,7 @@ function IssuesBlock() {
 
     if(PredictionValue != "Healthy"){
       prediction = PredictionValue;
-      return "Consult a doctor, This AI model predicts you have "+ prediction;
+      return "PLease Consult a doctor, This AI model predicts you have "+ prediction;
     }
     else{
       return "The AI model returned a prediction of Healthy"
