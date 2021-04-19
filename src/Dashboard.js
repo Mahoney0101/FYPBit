@@ -319,15 +319,6 @@ function IssuesBlock() {
             </div>
             <div className="bmi"><span className="title title-bmi">{BMI}</span></div>
             <div className="float-none" />
-            <h2 className="allergies">allergies</h2>
-            <div className="row">peanuts<div className="severity">
-                <div className="fill" style={{width: '45%', height: 'inherit'}} />
-              </div>
-            </div>
-            <div className="row">penicilin<div className="severity">
-                <div className="fill" style={{width: '80%', height: 'inherit'}} />
-              </div>
-            </div>
           </div>
         </div>
         <div className="content-column">
