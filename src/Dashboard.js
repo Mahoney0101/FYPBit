@@ -355,7 +355,7 @@ function IssuesBlock() {
           </div>
           <div className="float-none" />
           <div className="split-container">
-            <div className="split bottom">
+            <div className="split bottom bottomRoomForPrediction">
               <h2>Lung Recording Prediction</h2>
               <div className="appointments">
                 {PredictionValue}
