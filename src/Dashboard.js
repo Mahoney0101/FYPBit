@@ -318,7 +318,7 @@ function IssuesBlock() {
               <div className="data"><span>{userDetails.height}cm</span></div>
             </div>
             <div className="bmi"><span className="title title-bmi">{BMI}</span></div>
-            <div className="bmi"><button className="healthButton" onClick={() => {setViewStatus(!viewStatus)}}>Health Breakdown</button></div>
+            <div className="bmi"><button className="healthButton" onClick={() => {setViewStatus(!viewStatus)}}>Session Breakdown</button></div>
             <div className="float-none" />
           </div>
         </div>
