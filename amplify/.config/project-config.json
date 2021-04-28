@@ -2,8 +2,8 @@
   "providers": [
     "awscloudformation"
   ],
-  "projectName": "cloud-app-dev",
-  "version": "3.0",
+  "projectName": "FYPBit",
+  "version": "3.1",
   "frontend": "javascript",
   "javascript": {
     "framework": "react",
