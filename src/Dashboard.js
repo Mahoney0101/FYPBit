@@ -203,6 +203,18 @@ function IssuesBlock() {
     });
   }
 
+  const BPMScore = () => {
+    let BPM = RHRValue;
+
+    if(BPM>49 && BPM<70)
+    {
+      return "Good RHR is in ideal range";
+    }
+    else{
+      return "BPM not in ideal range, consult a doctor for more information";
+    }
+  }
+
   const tempScore = () => {
     let temp = "";
     let temphigh = 36.9;
@@ -305,8 +317,9 @@ function IssuesBlock() {
     let lung = predictionScore();
     let temp = tempScore();
     let bmi = BMIScore();
-    let issues = [hrv, lung, temp, bmi];
-    let scores = [hrv.split(" ")[0], lung.split(" ")[0], temp.split(" ")[0], bmi.split(" ")[0]];
+    let bpm = BPMScore();
+    let issues = [bpm, hrv, lung, temp, bmi];
+    let scores = [bpm.split(" ")[0], hrv.split(" ")[0], lung.split(" ")[0], temp.split(" ")[0], bmi.split(" ")[0]];
     scores.forEach(item => {item === "Good" ? "" : score = "Bad"});
     setHealth(score);   
     setViewStatus(true);
