@@ -214,7 +214,7 @@ function IssuesBlock() {
       temp = "high";
     }
     else{
-      temp = "Good";
+      return "Good temperature is in normal range"
     }
     return "You have a "+temp+ " temperature. temp is "+ TemperatureValue;
   }
@@ -228,8 +228,9 @@ function IssuesBlock() {
     if(BMI<BMILow){
       BMIScore = "underweight";
     }
-    else if(BMI>=BMILow && BMI <= BMIHigh){
-      BMIScore = "Healthy";
+    else if(BMI>=BMILow && BMI <= BMIHigh)
+    {
+      return "Good BMI at "+BMI;
     }
     else if(BMI>BMIHigh&& BMI<BMIObese){
       BMIScore = "overweight";
@@ -245,10 +246,10 @@ function IssuesBlock() {
 
     if(PredictionValue != "Healthy"){
       prediction = PredictionValue;
-      return "PLease Consult a doctor, This AI model predicts you have "+ prediction;
+      return "The AI model returned a value of "+ prediction;
     }
     else{
-      return "The AI model returned a prediction of Healthy"
+      return "Good The AI model returned a prediction of Healthy"
     }
   } 
   const Between = (num,low, high) =>{
@@ -262,21 +263,36 @@ function IssuesBlock() {
   }
   const HRVScore = () => {
     let HRVScore;
+    let GoodHRV = "Good HRV in normal range";
     let age = userDetails.age;
     if(age>17&&age<26&&Between(HRVValue,60, 76))
-      HRVScore = "Good";
+    {
+      HRVScore = GoodHRV;
+    }
     else if(age>=26&&age<36&&Between(HRVValue,55,72))
-      HRVScore = "Good";
+    {
+      HRVScore = GoodHRV;
+    }
     else if(age>=36&&age<46&&Between(HRVValue,52,69))
-      HRVScore = "Good";
+    {
+      HRVScore = GoodHRV;
+    }
     else if(age>=46&&age<56&&Between(HRVValue,47,68))
-      HRVScore = "Good";
+    {
+      HRVScore = GoodHRV;
+    }
     else if(age>=56&&age<66&&Between(HRVValue,42,64))
-      HRVScore = "Good";
+    {
+      HRVScore = GoodHRV;
+    }
     else if(age>=66&&age<76&&Between(HRVValue,40,63))
-      HRVScore = "Good";
+    {
+      HRVScore = GoodHRV;
+    }
     else if(age>75&&Between(33,68))
-      HRVScore = "HRV is in normal range";
+    {
+      HRVScore = GoodHRV;
+    }
     else
       HRVScore = "HRV not in normal range, this could be normal if you are sick or have recently been stressed or participated in stressful activity. value is "+HRVValue;
     return HRVScore
@@ -284,19 +300,18 @@ function IssuesBlock() {
 
   const calculateHeath = () =>{
     if(BMI !== ""){ 
-    let score = "";
-    let issuesb = [];
-    let goodIssues = [];
+    let score = "Good";
     let hrv = HRVScore();
     let lung = predictionScore();
     let temp = tempScore();
     let bmi = BMIScore();
-    let scores = [hrv, lung, temp, bmi];
-    scores.forEach(item => {item === "Good" ? goodIssues.push(item) : score = "Bad"; issuesb.push(item)});
+    let issues = [hrv, lung, temp, bmi];
+    let scores = [hrv.split(" ")[0], lung.split(" ")[0], temp.split(" ")[0], bmi.split(" ")[0]];
+    scores.forEach(item => {item === "Good" ? "" : score = "Bad"});
     setHealth(score);   
     setViewStatus(true);
-    let issuesc = issuesb.map(item =>  {return <li key={item}>{item}</li>})
-    setIssues(issuesc);
+    issues = issues.map(item =>  {return <li key={item}>{item}</li>})
+    setIssues(issues);
     }
   }
 
