@@ -276,7 +276,7 @@ function IssuesBlock() {
     else if(age>=66&&age<76&&Between(HRVValue,40,63))
       HRVScore = "Good";
     else if(age>75&&Between(33,68))
-      HRVScore = "Good";
+      HRVScore = "HRV is in normal range";
     else
       HRVScore = "HRV not in normal range, this could be normal if you are sick or have recently been stressed or participated in stressful activity. value is "+HRVValue;
     return HRVScore
