@@ -1,2 +1,2 @@
 # System Architecture Diagram
-<img src="images\SystemArchitectureDiagram.PNG">
+<img src="images\SystemArchitectureDiagram.png">
