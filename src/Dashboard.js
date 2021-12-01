@@ -228,7 +228,7 @@ function IssuesBlock() {
     else{
       return "Good temperature is in normal range"
     }
-    return "Http://test.com test You have a "+temp+ " temperature. temp is "+ TemperatureValue;
+    return "You have a "+temp+ " temperature. temp is "+ TemperatureValue;
   }
 
   const BMIScore = () => {
